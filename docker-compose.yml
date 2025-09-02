@@ -1,0 +1,22 @@
+# docker-compose.yml
+version: '3.4'
+
+services:
+  weaviate:
+    image: semitechnologies/weaviate:v1.24.0
+    ports:
+      - "8080:8080"
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: "./data"
+      DEFAULT_VECTORIZER_MODULE: text2vec-transformers
+      TRANSFORMERS_INFERENCE_API: "http://t2v-transformers:8080"
+    restart: on-failure:0
+    depends_on:
+      - t2v-transformers
+
+  t2v-transformers:
+    image: semitechnologies/transformers-inference:sentence-transformers-all-minilm-l6-v2
+    ports:
+      - "8081:8080"
